@@ -1,0 +1,46 @@
+socket이 하는일 :
+소프트웨어와 소프트웨어를 연결해주는 수단
+
+Chrome (웹브라우저 - 클라이언트) -> apache (웹서버역할)
+을 이어주는 역할을 한다.
+
+tcp 4계층 중에 전송계층 위에있다고 볼 수 있다.
+
+포트란 , IP로 컴퓨터는 찾아갈 수 있지만 특정 프로그램을 찾아가기엔 무리가 있다.
+예를 들어 IP가 집 주소라면 포트는 각 방을 의미한다.
+ex) FireFOX - 인터넷 - 80:HTTP(웹)
+SSH(Secure shell - 보안 원격) - 인터넷 - 22:SSHD
+OutLook - 인터넷 - 25:email
+telnet :23번 포트
+nameserver : 42번포트
+
+포트 번호 크기 : short int (1-65536) 2byte 크기를 가진다.
+시스템포트 : 1-1024
+
+흐름 ->
+1. 송신측 (클라이언트측)
+소켓생성 ->포트부여 ->상대편 IP/port 주소로 연결 -> 통신 ->종료
+socket() -> connect() -> read(),write() -> close()
+
+2. 수신측 (서버측)
+소켓생성 -> 포트부여 -> 상대편 연결 기다리기 -> 통신 -> 종료
+socket() -> bind() -> listen() -> accept()->read(),write() -> close()
+
+이때 사용하는것이 소켓 API 이다.
+소켓 데이터 통신
+
+1) 데이터 입출력
+소켓함수 : send,recv,sendto,recfrom
+파일함수 : read,write
+
+유닉스 계열은 마지막에 close 함수를 사용해야한다. (소켓도 파일로 보기 때문에)
+윈도우 계열은 마지막에 closesocket 함수를 사용한다.
+
+accept= 요청을 기다리는 함수
+
+bind 함수 = 소켓을 인터넷 주소에 묶어주는 함수 => int bind(int sockfd , struct sockaddr *my_addr,socklen_t addlen);
+listen 함수 = 수신 대기열을 만든다. => int listen(int queue_size);
+--> 유명한 웹 서버의 경우 초당 수만개의 데이터요청이 올 수 있다. 먼저들어온
+요청을 받고 남은 요청들을 시간을 두고 대기하도록 만드는것.
+
+accept 함수 = listen 대기열에 있는 연결 요청을 가져온다. =>int accept(int s,struct sockaddr *addr,socklen_t *addrlen);
